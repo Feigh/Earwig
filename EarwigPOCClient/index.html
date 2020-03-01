@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="row">
+        <div class="column">
+            <h2>Välkomen</h2>
+            <label for="playername">Användarnamn:</label>
+            <input id="playername" class="inputtext" type="text"></input>
+            <input type="button" class="submitbutton" onclick="StartGame()" value="Starta"></input>
+        </div>
+    </div>
+</body>
+</html>
+
+<style type="text/css">
+
+    .row {
+    float: left;
+    }
+    input{
+        margin-bottom: 5px;
+    }
+
+    .column {
+        width: 150px;
+        margin: 0 auto;
+    }
+    input{       
+        background-color:greenyellow;
+        border-style: none;
+        height: 30px;
+        border-radius: 10px;
+    }
+    .inputtext{
+        width:150px;
+        text-align: center;
+    }
+    .submitbutton{
+        width:150px;
+        background-color:limegreen;
+        border-style: none;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;   
+    }
+
+    body{
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;        
+        background-color: lightgreen;
+    }
+</style>
+
+<script>
+    function StartGame()
+    {
+        var playerName = document.getElementById('playername');
+        console.log(playerName.value)       
+        //SubmitPlayerNameReceiveServerCode(playerName.value);
+        SubmitPlayerNameReciveServerCodePromise(playerName.value).then(result => window.location="game.html");
+    }
+
+    function SubmitPlayerNameReciveServerCodePromise(playername){
+        return $.ajax({
+            url: "http://localhost:4333/player",
+            dataType: 'text',
+            type: "POST",
+            contentType: "text/plain",
+            data: playername
+        });
+    }
+
+    function SubmitPlayerNameReceiveServerCode(playername){
+        var http = new XMLHttpRequest();
+        var url = 'http://localhost:4333/player';
+        var params = playername;
+        http.open('POST', url, true);
+        http.setRequestHeader('Content-type', "text/plain");
+        http.send(params);
+    }
+</script>
+

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+    Start
+    <ul id="UserInput-List" class="SelectionList"></ul>
+    <input type="submit" onclick="SubmitPlayerSelection()" value="Send"></input>
+</body>
+</html>
+
+<style type="text/css">
+
+    input[type="submit"]{
+        background-color:greenyellow;
+    }
+    .SelectionList{
+        margin: 0; 
+        padding: 0;
+        text-align: left;
+    }
+    input{
+        width:100px;
+        background-color:limegreen;
+        border-radius: 10%;
+        border-style: solid;
+        border-width: 0;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;   
+    }
+    .SelectedButton{
+        background-color: coral;
+    }
+    ul {
+    list-style-type: none;
+        margin: 0; 
+        padding: 0;
+    }
+    li{
+        margin-bottom: 5px;
+    }
+    body{
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;        
+        background-color: lightgreen;
+    }
+</style>
+
+<script>
+    window.onload = function () {
+        GetSelectionFromServer();
+    }
+
+    function GetUserInputFromServer(result)
+    {
+        var descer = JSON.parse(result);
+        var item = document.getElementById('UserInput-List');
+
+        while( item.firstChild ){
+            item.removeChild( item.firstChild );
+        }
+        item.appendChild(MakeUserInput(descer));
+    }
+
+    function MakeUserInput(array)
+    {
+        var list = document.createElement('ul')
+        
+        for (var i = 0; i < array.length; i++) {
+            // Create the list item:
+            var item = document.createElement('li');
+            var button = document.createElement('input')
+            button.setAttribute("id", array[i].ID);
+            button.setAttribute("type", "button");
+            button.setAttribute("value", array[i].Selection);
+            button.onclick = function()
+            { 
+                if(this.classList.contains("SelectedButton"))       
+                {
+                    this.classList.remove("SelectedButton");
+                    return;           
+                } 
+                    this.classList.add("SelectedButton");         
+            };
+            item.appendChild(button);
+            // Set its contents:
+            //item.appendChild(document.createTextNode(array.Selection[i]));
+            // Add it to the list:
+            list.appendChild(item);
+        }
+        return list;
+    }
+
+    function GetGameDataPromise(){
+        return $.ajax({
+            url: "http://localhost:4333/game",
+            type: "GET"
+        });
+    }
+
+    function SubmitPlayerSelection(){
+
+        var list = document.getElementById('UserInput-List').getElementsByTagName("input");
+        var result = [];
+        for(var i of list)
+        {       
+            if(i.classList.contains("SelectedButton"))       
+            {
+                result.push(i.id)
+            }
+        }
+        console.log(result);
+
+             $.ajax({
+            url: "http://localhost:4333/player",
+            dataType: 'text',
+            type: "POST",
+            contentType: "text/plain",
+            data: JSON.parse()
+        });
+    }
+
+    function GetSelectionFromServer()
+    {
+        GetGameDataPromise().then(response => GetUserInputFromServer(response));
+    }
+</script>
